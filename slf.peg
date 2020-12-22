@@ -1,83 +1,81 @@
-Liberty <- Spacing Library* EOF;
+liberty <- library* EOF;
 
 // By convention: K_xxx is keyword xxx
-Library <- Spacing K_LIBRARY LPAREN LibraryName RPAREN
-                LCURLY LibraryEle* RCURLY;
+library <- K_LIBRARY LPAREN libraryname RPAREN
+                LCURLY libraryele* RCURLY;
 
-LibraryName <- IDENT / STRING;
+libraryname <- IDENT / STRING;
 
-// Cell must be first to match 'cell' keyword
-LibraryEle <- Cell / KeyValue;
+// cell must be first to match 'cell' keyword
+libraryele <- cell / keyvalue;
 
-Cell <- K_CELL LPAREN (IDENT / STRING) RPAREN ValueSet;
+cell <- K_CELL LPAREN (IDENT / STRING) RPAREN valueset;
 
-ValueSet <- LCURLY KeyValue* RCURLY;
+valueset <- LCURLY keyvalue* RCURLY;
 
-KeyValue <- IDENT COLON ValueType SEMI?
-         /  IDENT LPAREN ValueTypeList? RPAREN
-                ( ValueSet /  SEMI? );
+keyvalue <- IDENT COLON valuetype SEMI?
+         /  IDENT LPAREN valuetypelist? RPAREN
+                ( valueset /  SEMI? );
 
-ValueType <- Expr
-          /  VIdent Bus?
+valuetype <- expr
+          /  vident bus?
           /  STRING
-          /  Number (Unit !(COLON / LPAREN))?
-          /  Bool;
+          /  number (unit !(COLON / LPAREN))?
+          /  bool;
 
-Bus <- LBRACK Number (COLON Number)? RBRACK;
+bus <- LBRACK number (COLON number)? RBRACK;
 
-Unit <- IDENT;
+unit <- IDENT;
 
-ValueTypeList <- ValueType (COMMA ValueType)*;
+valuetypelist <- valuetype (COMMA valuetype)*;
 
-Bool <- K_TRUE / K_FALSE;
+bool <- K_TRUE / K_FALSE;
 
-Expr <- ExprVal (ExprOp ExprVal)+;
+expr <- exprval (exprop exprval)+;
 
-ExprVal <- IDENT / Number;
+exprval <- IDENT / number;
 
-ExprOp <- STAR / PLUS;
+exprop <- STAR / PLUS;
 
-Number <- (Float / Integer) Spacing;
+number <- (float / integer);
 
 // NOTE: order of alts important since CELL matches an IDENT
-VIdent <- K_CELL / K_LIBRARY / IDENT;
+vident <- K_CELL / K_LIBRARY / IDENT;
 
-// Lexical syntax
+// lexical syntax
 
-COLON       <- ':'  Spacing;
-COMMA       <- ',' Spacing;
-LCURLY      <- '{' Spacing;
-RCURLY      <- '}' Spacing;
-LPAREN      <- '(' Spacing;
-RPAREN      <- ')' Spacing;
-LBRACK      <- '[' Spacing;
-RBRACK      <- ']' Spacing;
-SEMI        <- ';' Spacing;
-STAR        <- '*' Spacing;
-PLUS        <- '+' Spacing;
-K_CELL      <- "cell" Spacing;
-K_LIBRARY   <- "library" Spacing;
-K_TRUE      <- "true" Spacing;
-K_FALSE     <- "false" Spacing;
+COLON       <- ':';
+COMMA       <- ',';
+LCURLY      <- '{';
+RCURLY      <- '}';
+LPAREN      <- '(';
+RPAREN      <- ')';
+LBRACK      <- '[';
+RBRACK      <- ']';
+SEMI        <- ';';
+STAR        <- '*';
+PLUS        <- '+';
+K_CELL      <- "cell";
+K_LIBRARY   <- "library";
+K_TRUE      <- "true";
+K_FALSE     <- "false";
 
-IDENT      <- IdentStart IdentCont* Spacing;
-IdentStart <- r'[a-zA-Z_]';
-IdentCont  <- IdentStart / r'[0-9.+/]' / '-';
+IDENT      <- identstart identcont*;
+identstart <- r'[a-zA-Z_]';
+identcont  <- identstart / r'[0-9.+/]' / '-';
 
-Integer <- r'[-+]'? Digit+;
+integer <- r'[-+]'? digit+;
 
-Digit <- r'[0-9]';
+digit <- r'[0-9]';
 
-Float <- Integer ('.' Digit+)? (r'[eE]' Integer)?;
+float <- integer ('.' digit+)? (r'[eE]' integer)?;
 
-// Include \\. EOLN so string can span lines
-STRING <- '"' (!'"' r'[\.]')* '"' Spacing;
+// include \\. EOLN so string can span lines
+STRING <- ".*?";
 
-Spacing <- (Space / Comment)*;
-Comment <- SL_COMMENT / ML_COMMENT;
-Space <- ' ' / "\t" / ('\\'? EOL);
+comment <- SL_COMMENT / ML_COMMENT;
 
-SL_COMMENT  <- "//" (!EOL r'[\.]')* EOL;
+SL_COMMENT  <- r'"//.*"';
 
-ML_COMMENT <- "/*" (!"*/" r'[\.]')* "*/";
+ML_COMMENT <- r'"/\*.*\*/"';
 
