@@ -1,12 +1,12 @@
 Grammar <- Spacing Library* EOF
 
-#By convention: K_xxx is keyword xxx
+// By convention: K_xxx is keyword xxx
 Library <- Spacing K_LIBRARY LPAREN LibraryName RPAREN
                 LCURLY LibraryEle* RCURLY 
 
 LibraryName <- IDENT / STRING
 
-#Cell must be first to match 'cell' keyword
+// Cell must be first to match 'cell' keyword
 LibraryEle <- Cell / KeyValue
 
 Cell <- K_CELL LPAREN (IDENT / STRING) RPAREN ValueSet
@@ -39,10 +39,10 @@ ExprOp <- STAR / PLUS
 
 Number <- (Float / Integer) Spacing
 
-#NOTE: order of alts important since CELL matches an IDENT
+// NOTE: order of alts important since CELL matches an IDENT
 VIdent <- K_CELL / K_LIBRARY / IDENT
 
-#Lexical syntax
+// Lexical syntax
 
 COLON       <- ':'  Spacing
 COMMA       <- ',' Spacing
@@ -70,7 +70,7 @@ Digit <- [0-9]
 
 Float <- Integer ('.' Digit+)? ([eE] Integer)?
 
-#Include \\. EOLN so string can span lines
+// Include \\. EOLN so string can span lines
 STRING <- '"' (!'"' .)* '"' Spacing
 
 Spacing <- (Space / Comment)*
