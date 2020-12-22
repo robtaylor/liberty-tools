@@ -1,81 +1,58 @@
-liberty <- library* EOF;
+liberty <- library+ EOF;
 
 // By convention: K_xxx is keyword xxx
-library <- K_LIBRARY LPAREN libraryname RPAREN
-                LCURLY libraryele* RCURLY;
+library <- 'library' '(' libraryname ')'
+                '{' libraryele* '}';
 
-libraryname <- IDENT / STRING;
+libraryname <- ident / string;
 
 // cell must be first to match 'cell' keyword
 libraryele <- cell / keyvalue;
 
-cell <- K_CELL LPAREN (IDENT / STRING) RPAREN valueset;
+cell <- 'cell' '(' (ident / string) ')' valueset;
 
-valueset <- LCURLY keyvalue* RCURLY;
+valueset <- '{' keyvalue* '}';
 
-keyvalue <- IDENT COLON valuetype SEMI?
-         /  IDENT LPAREN valuetypelist? RPAREN
-                ( valueset /  SEMI? );
+keyvalue <- ident ':' valuetype ';'?
+         /  ident '(' valuetypelist? ')'
+                ( valueset /  ';'? );
 
 valuetype <- expr
           /  vident bus?
-          /  STRING
-          /  number (unit !(COLON / LPAREN))?
+          /  string
+          /  number (unit !(':' / '('))?
           /  bool;
 
-bus <- LBRACK number (COLON number)? RBRACK;
+bus <- '[' number (':' number)? ']';
 
-unit <- IDENT;
+unit <- ident;
 
-valuetypelist <- valuetype (COMMA valuetype)*;
+valuetypelist <- valuetype (',' valuetype)*;
 
-bool <- K_TRUE / K_FALSE;
+bool <- 'true' / 'false';
 
 expr <- exprval (exprop exprval)+;
 
-exprval <- IDENT / number;
+exprval <- ident / number;
 
-exprop <- STAR / PLUS;
+exprop <- '*' / '+';
 
 number <- (float / integer);
 
-// NOTE: order of alts important since CELL matches an IDENT
-vident <- K_CELL / K_LIBRARY / IDENT;
+vident <- 'cell' / 'library' / ident;
 
 // lexical syntax
 
-COLON       <- ':';
-COMMA       <- ',';
-LCURLY      <- '{';
-RCURLY      <- '}';
-LPAREN      <- '(';
-RPAREN      <- ')';
-LBRACK      <- '[';
-RBRACK      <- ']';
-SEMI        <- ';';
-STAR        <- '*';
-PLUS        <- '+';
-K_CELL      <- "cell";
-K_LIBRARY   <- "library";
-K_TRUE      <- "true";
-K_FALSE     <- "false";
+ident <- r'[a-zA-Z_]\w*';
 
-IDENT      <- identstart identcont*;
-identstart <- r'[a-zA-Z_]';
-identcont  <- identstart / r'[0-9.+/]' / '-';
+integer <- r'[-+]?[\d]';
 
-integer <- r'[-+]'? digit+;
+float <- r'[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?';
 
-digit <- r'[0-9]';
+string <- r'".*"';
 
-float <- integer ('.' digit+)? (r'[eE]' integer)?;
-
-// include \\. EOLN so string can span lines
-STRING <- ".*?";
-
-comment <- SL_COMMENT / ML_COMMENT;
-
-SL_COMMENT  <- r'"//.*"';
-
-ML_COMMENT <- r'"/\*.*\*/"';
+comment <- single_line_comment / multi_line_comment / escape_newline;
+single_line_comment <- '//' r'.*\n';
+multi_line_comment <- '\*' r'.*' '*/';
+escape_newline <- '\\\n';
 
