@@ -13,9 +13,11 @@ cell <- 'cell' '(' (ident / string) ')' valueset;
 
 valueset <- '{' keyvalue* '}';
 
-keyvalue <- ident ':' valuetype ';'?
-         /  ident '(' valuetypelist? ')'
-                ( valueset /  ';'? );
+keyvalue <- group / simple_attribute / complex_attribute;
+
+simple_attribute <- ident ':' valuetype ';'?;
+complex_attribute <- ident '(' valuetypelist? ')' ';'?;
+group <- ident '(' valuetypelist? ')' valueset;
 
 valuetype <- expr
           /  vident bus?
