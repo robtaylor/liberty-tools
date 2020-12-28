@@ -62,7 +62,7 @@ class LibertyNodeVisitor(PTNodeVisitor):
         super(LibertyNodeVisitor, self).__init__(*args, **kwargs)
 
     def visit_library(self, node, children):
-        #print(f"\n\nlibrary: {children}")
+        # print(f"\n\nlibrary: {children}")
         libraryname = children[0]
         elements = children[1:]
         return {"library": {"name": libraryname,
@@ -82,7 +82,7 @@ class LibertyNodeVisitor(PTNodeVisitor):
         return {children[0]: children[1]}
 
     def visit_complex_attribute(self, node, children):
-        #print(f"\n\ncomplex attribute:  {children}")
+        # print(f"\n\ncomplex attribute:  {children}")
         values = []
         if len(children) > 1:
             values = children[1]
