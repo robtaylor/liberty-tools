@@ -8,6 +8,8 @@
 # License: MIT License
 ###############################################################################
 
+from enum import Enum
+from glob import glob
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.peg import ParserPEG
@@ -102,20 +104,27 @@ class LibertyNodeVisitor(PTNodeVisitor):
         return children
 
     def visit_valuetypelist(self, node, children):
-        #print(f"\n\nvaluetypelist: {children}")
+        # print(f"\n\nvaluetypelist: {children}")
         return children
 
 
-def main(debug=False):
+def main(debug=False, all=False):
     peg_grammar = open('liberty.peg').read()
     parser = ParserPEG(peg_grammar, 'liberty', 'comment')
-    test = open('tests/sky130_fd_sc_hvl__ff_085C_5v50_lv1v95.lib').read()
-    tree = parser.parse(test)
-    print(tree.tree_str())
 
-    result = visit_parse_tree(tree, LibertyNodeVisitor(debug=debug))
-    #print(result)
+    def parse_file(file):
+        print(f"Parsing '{file}'")
+        test = open(file).read()
+        tree = parser.parse(test)
+        # print(tree.tree_str())
+        return visit_parse_tree(tree, LibertyNodeVisitor(debug=debug))
+
+    if all:
+        tests = glob('tests/*.lib')
+        return [parse_file(i) for i in tests]
+    else:
+        return parse_file('tests/sky130_fd_sc_hvl__ff_085C_5v50_lv1v95.lib')
 
 
 if __name__ == '__main__':
-    main(debug=False)
+    main(debug=False, all=True)
