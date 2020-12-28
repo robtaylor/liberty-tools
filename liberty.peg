@@ -18,18 +18,18 @@ keyvalue <- group / define / simple_attribute / complex_attribute;
 simple_attribute <- ident ':' valuetype ';'?;
 complex_attribute <- ident '(' valuetypelist? ')' ';'?;
 group <- ident '(' valuetypelist? ')' valueset;
-define <- 'define' '(' ident ',' ident ',' ident ')' ';'?;
 
 valuetype <- expr
           /  string
-          /  number (unit !(':' / '('))?
-          /  bool;
+          /  number
+          /  bool
+          /  ident;
 
 //          /  vident bus?
-//
-bus <- '[' number (':' number)? ']';
-
-unit <- ident;
+//          /  number (unit !(':' / '('))?
+// vident <- 'cell' / 'library' / ident;
+// bus <- '[' number (':' number)? ']';
+// unit <- ident;
 
 valuetypelist <- valuetype (',' valuetype)*;
 
@@ -43,7 +43,6 @@ exprop <- '*' / '+';
 
 number <- (float / integer);
 
-vident <- 'cell' / 'library' / ident;
 
 // lexical syntax
 
