@@ -13,6 +13,50 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.peg import ParserPEG
 
 
+class Node:
+    pass
+
+
+class Type(Enum):
+    EXPR = "Expression"
+    VIDENT = "VIdent"
+    VIDENT_WITH_BUS = "VIdent_with_bus"
+    STRING = "String"
+    NUMBER = "Number"
+    BOOL = "Bool"
+
+
+class Value:
+    type: str
+
+
+class Library(Node):
+    name: str
+    elements: [Node]
+
+
+class Cell(Node):
+    name: str
+    values: [Node]
+
+
+class Group(Node):
+    name: str
+    parameters: [Node]
+    attributes: [Node]
+
+
+class Define(Node):
+    attribute_name: str
+    group_name: str
+    attribute_type: str
+
+
+class SimpleAttribute(Node):
+    name: str
+    value: Value
+
+
 class LibertyNodeVisitor(PTNodeVisitor):
     def __init__(self, *args, **kwargs):
         super(LibertyNodeVisitor, self).__init__(*args, **kwargs)
