@@ -8,6 +8,9 @@
 # License: MIT License
 ###############################################################################
 
+
+import concurrent.futures
+
 from enum import Enum
 from glob import glob
 
@@ -121,7 +124,10 @@ def main(debug=False, all=False):
 
     if all:
         tests = glob('tests/*.lib')
-        return [parse_file(i) for i in tests]
+        print(tests)
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            results = executor.map(parse_file,tests)
+        return results
     else:
         return parse_file('tests/sky130_fd_sc_hvl__ff_085C_5v50_lv1v95.lib')
 
