@@ -2,14 +2,11 @@ liberty <- library+ EOF;
 
 // By convention: K_xxx is keyword xxx
 library <- 'library' '(' libraryname ')'
-                '{' libraryele* '}';
+                '{' keyvalue* '}';
 
 libraryname <- ident / string;
 
 // cell must be first to match 'cell' keyword
-libraryele <- cell / keyvalue;
-
-cell <- 'cell' '(' (ident / string) ')' valueset;
 
 valueset <- '{' keyvalue* '}';
 
@@ -24,12 +21,6 @@ valuetype <- expr
           /  number
           /  bool
           /  ident;
-
-//          /  vident bus?
-//          /  number (unit !(':' / '('))?
-// vident <- 'cell' / 'library' / ident;
-// bus <- '[' number (':' number)? ']';
-// unit <- ident;
 
 valuetypelist <- valuetype (',' valuetype)*;
 
